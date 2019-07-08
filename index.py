@@ -18,22 +18,22 @@ class Index:
         text_file_path = "collection/" + text_file
 
         # retrieve contents from file
-        contents = self.read_text_file(text_file_path)
+        text_contents = self.read_text_file(text_file_path)
 
         # convert string to list
-        contents = self.convert_string_to_list(contents)
+        text_contents = self.convert_string_to_list(text_contents)
 
         i = 0
-        myDict= {}
+        text_dictionary = {}
 
-        for content in contents:
-            myDict.setdefault(content, []).append(i)
+        for word in text_contents:
+            text_dictionary.setdefault(word, []).append(i)
             # print(content2 + ": " + text_file, i)
             i += 1
 
-        myDict = collections.OrderedDict(sorted(myDict.items()))
+        text_dictionary = collections.OrderedDict(sorted(text_dictionary.items()))
 
-        return myDict
+        return text_dictionary
 
     def and_query(self, query_terms):
         # function for identifying relevant docs using the index
