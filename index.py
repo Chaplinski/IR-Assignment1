@@ -13,7 +13,6 @@ class Index:
         # index should also contain positional information of the terms in the
         # document --- term: [(ID1,[pos1,pos2,..]), (ID2, [pos1,pos2,…]),….]
         # use unique document IDs
-
         text_file = "Text-009.txt"
         text_file_path = "collection/" + text_file
 
@@ -25,10 +24,12 @@ class Index:
 
         i = 0
         text_dictionary = {}
-
         for word in text_contents:
+            if not text_dictionary.setdefault(word, []):
+                temp_dictionary = {text_file}
+                text_dictionary.setdefault(word, []).append(temp_dictionary)
+
             text_dictionary.setdefault(word, []).append(i)
-            # print(content2 + ": " + text_file, i)
             i += 1
 
         text_dictionary = collections.OrderedDict(sorted(text_dictionary.items()))
