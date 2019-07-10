@@ -13,26 +13,32 @@ class Index:
         # index should also contain positional information of the terms in the
         # document --- term: [(ID1,[pos1,pos2,..]), (ID2, [pos1,pos2,…]),….]
         # use unique document IDs
-        text_file = "Text-009.txt"
-        text_file_path = "collection/" + text_file
 
-        # retrieve contents from file
-        text_contents = self.read_text_file(text_file_path)
-
-        # convert string to list
-        text_contents = self.convert_string_to_list(text_contents)
-
-        i = 0
+        # retrieve all documents from collection directory
+        text_files = os.listdir("collection/")
         text_dictionary = {}
-        for word in text_contents:
-            if not text_dictionary.setdefault(word, []):
-                temp_dictionary = {text_file}
-                text_dictionary.setdefault(word, []).append(temp_dictionary)
 
-            text_dictionary.setdefault(word, []).append(i)
-            i += 1
+        for text_file in text_files:
 
-        text_dictionary = collections.OrderedDict(sorted(text_dictionary.items()))
+            text_file_path = "collection/" + text_file
+
+            # retrieve contents from file
+            text_contents = self.read_text_file(text_file_path)
+
+            # convert string to list
+            text_contents = self.convert_string_to_list(text_contents)
+
+            i = 0
+
+            for word in text_contents:
+                if not text_dictionary.setdefault(word, []):
+                    temp_dictionary = {text_file}
+                    text_dictionary.setdefault(word, []).append(temp_dictionary)
+
+                text_dictionary.setdefault(word, []).append(i)
+                i += 1
+
+            text_dictionary = collections.OrderedDict(sorted(text_dictionary.items()))
 
         return text_dictionary
 
@@ -59,7 +65,7 @@ class Index:
         contents = re.sub(r'\d+', '', contents)
 
         # remove punctuation, replace with a space
-        for char in "-\n":
+        for char in "-:\n":
             contents = contents.replace(char, ' ')
 
         # remove quotes and apostrophes, replace with empty string
