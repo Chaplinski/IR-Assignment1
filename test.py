@@ -33,17 +33,17 @@ for potential_new_word in new_words:
                     if text_val == text:
                         is_already_saved = True
 
-                # if text is already 
+                # if text already has values saved
                 if is_already_saved:
+                    # iterate through lists
                     for list in value:
-                        print(list)
+                        # position 0 in a list refers to the definition of what text it refers to
                         if list[0] == text:
                             # if first value in key list is a text that already has this term then append
                             # word int location to list
                             list[1].append(integer)
-
+                # if list does not already have values saved
                 else:
-                    print('New Text')
                     # append text and word int location to list
                     value.append([text, [integer]])
 

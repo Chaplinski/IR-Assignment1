@@ -15,10 +15,12 @@ class Index:
         # use unique document IDs
 
         # retrieve all documents from collection directory
-        text_files = os.listdir("collection/")
+        # text_files = os.listdir("collection/")
+        text_files = ['Text-001.txt', 'Text-002.txt']
         text_dictionary = {}
 
         for text_file in text_files:
+            print(text_file)
 
             text_file_path = "collection/" + text_file
 
@@ -28,17 +30,11 @@ class Index:
             # convert string to list
             text_contents = self.convert_string_to_list(text_contents)
 
-            i = 0
+            # build dictionary
+            text_dictionary = self.build_dictionary(text_file, text_contents, text_dictionary)
 
-            for word in text_contents:
-                if not text_dictionary.setdefault(word, []):
-                    temp_dictionary = {text_file}
-                    text_dictionary.setdefault(word, []).append(temp_dictionary)
-
-                text_dictionary.setdefault(word, []).append(i)
-                i += 1
-
-            text_dictionary = collections.OrderedDict(sorted(text_dictionary.items()))
+            # alphabetize dictionary
+            # text_dictionary = collections.OrderedDict(sorted(text_dictionary.items()))
 
         return text_dictionary
 
@@ -79,3 +75,56 @@ class Index:
         contents = list(filter(None, contents))
 
         return contents
+
+    def build_dictionary(self, text_title, word_list, text_dictionary):
+
+        this_dict = text_dictionary
+        text = text_title
+
+        integer = 0
+        # for every word in a text
+        for potential_new_word in word_list:
+            # check if the word already exists in the dictionary
+            if potential_new_word in this_dict:
+                # if word does exist then access its value array
+                # print(potential_new_word)
+                for key, value in this_dict.items():
+                    # if the new word being added is the same as a key value
+                    if key == potential_new_word:
+                        # temp list holds values of all texts that already have int values saved
+                        already_saved_texts = []
+                        for list in value:
+                            # append text name to already_saved_texts list
+                            already_saved_texts.append(list[0])
+                        # set Boolean to false as a default
+                        is_already_saved = False
+                        # iterate though already_saved_texts looking for current text
+                        for text_val in already_saved_texts:
+                            # if current text exists set Boolean to true
+                            if text_val == text:
+                                is_already_saved = True
+
+                        # if text already has values saved
+                        if is_already_saved:
+                            # iterate through lists
+                            for list in value:
+                                # position 0 in a list refers to the definition of what text it refers to
+                                if list[0] == text:
+                                    # if first value in key list is a text that already has this term then append
+                                    # word int location to list
+                                    list[1].append(integer)
+                        # if list does not already have values saved
+                        else:
+                            # append text and word int location to list
+                            value.append([text, [integer]])
+
+            else:
+                # if word does not already exist in dictionary
+                # create new list containing text ID and int position in text to become value of new key
+                new_list = [text, [integer]]
+                # update dictionary to hold new key/value
+                this_dict.update({potential_new_word: new_list})
+
+            integer += 1
+
+        return this_dict
