@@ -20,7 +20,6 @@ class Index:
         text_dictionary = {}
 
         for text_file in text_files:
-            print(text_file)
 
             text_file_path = "collection/" + text_file
 
@@ -87,7 +86,6 @@ class Index:
             # check if the word already exists in the dictionary
             if potential_new_word in this_dict:
                 # if word does exist then access its value array
-                # print(potential_new_word)
                 for key, value in this_dict.items():
                     # if the new word being added is the same as a key value
                     if key == potential_new_word:
@@ -123,7 +121,7 @@ class Index:
                 # create new list containing text ID and int position in text to become value of new key
                 new_list = [text, [integer]]
                 # update dictionary to hold new key/value
-                this_dict.update({potential_new_word: new_list})
+                this_dict.update({potential_new_word: [new_list]})
 
             integer += 1
 

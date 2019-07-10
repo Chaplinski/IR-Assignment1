@@ -1,5 +1,8 @@
+import os
 
 # create dictionary
+
+text_files = os.listdir("collection2/")
 
 this_dict = {}
 this_list = []
