@@ -40,12 +40,16 @@ class Index:
 
             text_id += 1
 
+        # end timer
         end = time.clock()
         total_time = end - start
         return text_dictionary, total_time
 
     def and_query(self, query_terms):
         # function for identifying relevant docs using the index
+
+        # begin timer
+        start = time.clock()
 
         documents_per_word = {}
         # for every term in query_terms
@@ -75,12 +79,17 @@ class Index:
 
         print('Results for the query:', query_sentence)
         print('Total docs retrieved:', total_docs)
-        print(list_of_text_ids_with_all_words)
+        for doc in list_of_text_ids_with_all_words:
+            print(self.doc_name(doc))
+
+        # end timer
+        end = time.clock()
+        total_time = end - start
+        print('Retrieved in', total_time)
 
     def print_dict(self):
         # function to print the terms and posting list in the index
-        index_to_print = Index('collection/')
-        index_to_print = index_to_print.buildIndex()
+        index_to_print = self.buildIndex()
         print(index_to_print)
 
     def print_doc_list(self):
@@ -177,10 +186,29 @@ class Index:
                 sentence += ' AND ' + word
         return sentence
 
-index = Index('collection2/')
+    def doc_name(self, doc):
+        outro = '.txt'
+        full_value = ''
+        if doc < 10:
+            intro = 'Text-00'
+        elif doc < 100:
+            intro = 'Text-0'
+        else:
+            intro = 'Text-'
+        full_value += intro
+        full_value += str(doc)
+        full_value += outro
+        return full_value
+
+
+index = Index('collection/')
 final_index = index.buildIndex()
 print('Index built in', final_index[1], 'seconds')
 
 index.and_query(['with', 'had', 'the', 'was'])
+index.and_query(['china', 'that'])
+index.and_query(['would', 'end', 'the', 'war'])
+index.and_query(['hat', 'time', 'put'])
+index.and_query(['practice', 'banker', 'program', 'operation', 'employee', 'government'])
 
-
+# index.print_dict()
