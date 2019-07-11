@@ -5,7 +5,7 @@ import time
 
 class Index:
 
-    def __init__(self,path):
+    def __init__(self, path):
         self.path = path
 
     def buildIndex(self):
@@ -14,14 +14,17 @@ class Index:
         # document --- term: [(ID1,[pos1,pos2,..]), (ID2, [pos1,pos2,…]),….]
         # use unique document IDs
 
+        # begin timer
+        start = time.clock()
         # retrieve all documents from collection directory
-        # text_files = os.listdir("collection/")
-        text_files = ['Text-001.txt', 'Text-002.txt']
+        text_files = os.listdir(self.path)
+        # text_files = ['Text-001.txt', 'Text-002.txt']
         text_dictionary = {}
+        text_id = 1
 
         for text_file in text_files:
 
-            text_file_path = "collection/" + text_file
+            text_file_path = self.path + text_file
 
             # retrieve contents from file
             text_contents = self.read_text_file(text_file_path)
@@ -30,24 +33,61 @@ class Index:
             text_contents = self.convert_string_to_list(text_contents)
 
             # build dictionary
-            text_dictionary = self.build_dictionary(text_file, text_contents, text_dictionary)
+            text_dictionary = self.build_dictionary(text_id, text_contents, text_dictionary)
 
             # alphabetize dictionary
             # text_dictionary = collections.OrderedDict(sorted(text_dictionary.items()))
 
-        return text_dictionary
+            text_id += 1
+
+        end = time.clock()
+        total_time = end - start
+        return text_dictionary, total_time
 
     def and_query(self, query_terms):
         # function for identifying relevant docs using the index
-        return query_terms + ' woop'
+
+        documents_per_word = {}
+        # for every term in query_terms
+        for term in query_terms:
+            # get the key/value
+            for key, value in final_index[0].items():
+                # if the term equals the key
+                if term == key:
+                    # then the first position in each list is the ID of a document holding this value
+                    temp = []
+                    for arr in value:
+                        temp.append(arr[0])
+                    if temp:
+                        documents_per_word[key] = temp
+
+        # get arbitrary text_id list
+        list_of_text_ids_with_all_words = list(documents_per_word.values())[0]
+        # for each key/value in documents_per_word
+        for key, value in documents_per_word.items():
+            # store the intersection of these two lists, and check the intersection of every
+            # subsequent list against the initial list, which will shrink as text_ids are removed
+            list_of_text_ids_with_all_words = set(list_of_text_ids_with_all_words).intersection(value)
+
+        # create sentence describing the query
+        query_sentence = self.create_query_sentence(query_terms)
+        total_docs = len(list_of_text_ids_with_all_words)
+
+        print('Results for the query:', query_sentence)
+        print('Total docs retrieved:', total_docs)
+        print(list_of_text_ids_with_all_words)
 
     def print_dict(self):
         # function to print the terms and posting list in the index
-        return 'test'
+        index_to_print = Index('collection/')
+        index_to_print = index_to_print.buildIndex()
+        print(index_to_print)
 
     def print_doc_list(self):
         # function to print the documents and their document id
-        return 'test'
+        # TODO finish this
+        text_files = os.listdir(self.path)
+        print(text_files)
 
     def read_text_file(self, text_file):
         f = open(text_file, "r")
@@ -75,10 +115,10 @@ class Index:
 
         return contents
 
-    def build_dictionary(self, text_title, word_list, text_dictionary):
+    def build_dictionary(self, text_id, word_list, text_dictionary):
 
         this_dict = text_dictionary
-        text = text_title
+        text = text_id
 
         integer = 0
         # for every word in a text
@@ -126,3 +166,21 @@ class Index:
             integer += 1
 
         return this_dict
+
+    def create_query_sentence(self, query_terms):
+        # create sentence describing the query
+        sentence = ''
+        for word in query_terms:
+            if word == query_terms[0]:
+                sentence = word
+            else:
+                sentence += ' AND ' + word
+        return sentence
+
+index = Index('collection2/')
+final_index = index.buildIndex()
+print('Index built in', final_index[1], 'seconds')
+
+index.and_query(['with', 'had', 'the', 'was'])
+
+
