@@ -94,9 +94,18 @@ class Index:
 
     def print_doc_list(self):
         # function to print the documents and their document id
-        # TODO finish this
+        # get all text files
         text_files = os.listdir(self.path)
-        print(text_files)
+        # create empty list and iterator
+        doc_list = []
+        i = 1
+        # cast int to string, concatenate, and append to list
+        for text_file in text_files:
+            i_string = str(i)
+            string = i_string + " ==> " + text_file
+            doc_list.append(string)
+            i += 1
+        print(*doc_list, sep="\n")
 
     def read_text_file(self, text_file):
         f = open(text_file, "r")
@@ -210,5 +219,3 @@ index.and_query(['china', 'that'])
 index.and_query(['would', 'end', 'the', 'war'])
 index.and_query(['hat', 'time', 'put'])
 index.and_query(['practice', 'banker', 'program', 'operation', 'employee', 'government'])
-
-# index.print_dict()
