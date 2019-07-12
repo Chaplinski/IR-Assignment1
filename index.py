@@ -23,7 +23,7 @@ class Index:
         text_id = 1
 
         for text_file in text_files:
-
+            # concatenate path with file name
             text_file_path = self.path + text_file
 
             # retrieve contents from file
@@ -34,9 +34,6 @@ class Index:
 
             # build dictionary
             text_dictionary = self.build_dictionary(text_id, text_contents, text_dictionary)
-
-            # alphabetize dictionary
-            # text_dictionary = collections.OrderedDict(sorted(text_dictionary.items()))
 
             text_id += 1
 
@@ -70,13 +67,14 @@ class Index:
         # for each key/value in documents_per_word
         for key, value in documents_per_word.items():
             # store the intersection of these two lists, and check the intersection of every
-            # subsequent list against the initial list, which will shrink as text_ids are removed
+            # subsequent list against this list, which will shrink as text_ids are removed
             list_of_text_ids_with_all_words = set(list_of_text_ids_with_all_words).intersection(value)
 
         # create sentence describing the query
         query_sentence = self.create_query_sentence(query_terms)
         total_docs = len(list_of_text_ids_with_all_words)
 
+        # print results
         print('Results for the query:', query_sentence)
         print('Total docs retrieved:', total_docs)
         for doc in list_of_text_ids_with_all_words:
@@ -85,6 +83,7 @@ class Index:
         # end timer
         end = time.clock()
         total_time = end - start
+        # print time
         print('Retrieved in', total_time)
 
     def print_dict(self):
@@ -94,18 +93,12 @@ class Index:
 
     def print_doc_list(self):
         # function to print the documents and their document id
-        # get all text files
-        text_files = os.listdir(self.path)
-        # create empty list and iterator
-        doc_list = []
-        i = 1
-        # cast int to string, concatenate, and append to list
-        for text_file in text_files:
-            i_string = str(i)
-            string = i_string + " ==> " + text_file
-            doc_list.append(string)
-            i += 1
-        print(*doc_list, sep="\n")
+        # get doc dictionary
+        doc_dict = self.get_doc_id_and_title_dict()
+        # print each key value pair
+        for key, value in doc_dict.items():
+            key_string = str(key)
+            print(key_string + ' ==> ' + value)
 
     def read_text_file(self, text_file):
         f = open(text_file, "r")
@@ -196,26 +189,34 @@ class Index:
         return sentence
 
     def doc_name(self, doc):
-        outro = '.txt'
-        full_value = ''
-        if doc < 10:
-            intro = 'Text-00'
-        elif doc < 100:
-            intro = 'Text-0'
-        else:
-            intro = 'Text-'
-        full_value += intro
-        full_value += str(doc)
-        full_value += outro
-        return full_value
+        # get doc id dictionary
+        doc_dict = self.get_doc_id_and_title_dict()
+        for key, value in doc_dict.items():
+            # if doc passed in to this function equals the key in the dictionary return the value
+            if doc == key:
+                return value
+
+    def get_doc_id_and_title_dict(self):
+        # get all text files
+        text_files = os.listdir(self.path)
+        # create empty list and iterator
+        doc_dict = {}
+        i = 1
+        # cast int to string, concatenate, and append to list
+        for text_file in text_files:
+            doc_dict[i] = text_file
+            i += 1
+        return doc_dict
 
 
 index = Index('collection/')
 final_index = index.buildIndex()
-print('Index built in', final_index[1], 'seconds')
-
+# print(final_index)
+# print('Index built in', final_index[1], 'seconds')
+#
 index.and_query(['with', 'had', 'the', 'was'])
 index.and_query(['china', 'that'])
 index.and_query(['would', 'end', 'the', 'war'])
 index.and_query(['hat', 'time', 'put'])
 index.and_query(['practice', 'banker', 'program', 'operation', 'employee', 'government'])
+# index.print_doc_list()
